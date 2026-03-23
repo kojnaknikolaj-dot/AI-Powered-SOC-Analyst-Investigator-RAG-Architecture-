@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  soc_app:
+    build: .
+    container_name: soc_rag_analyzer
+    ports:
+      - "8501:8501"
+    volumes:
+      # Mount the current directory to persist the vector database locally
+      - .:/app
+    # Use host network to allow the container to reach the local Ollama instance
+    network_mode: "host"
+    environment:
+      - PYTHONUNBUFFERED=1
