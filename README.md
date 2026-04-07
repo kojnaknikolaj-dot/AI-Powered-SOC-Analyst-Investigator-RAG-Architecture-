@@ -1,78 +1,31 @@
-AI-Powered SOC Analyst Investigator (RAG Architecture)
+# SOC Analyst Level-1: AI-Powered RAG Model 🤖🛡️
 
-    About the Project
+## 📝 Project Overview
+This repository contains a **Retrieval-Augmented Generation (RAG)** system designed to assist SOC Analysts in investigating server logs. Instead of manually searching through thousands of lines, the analyst can query the system in natural language to find anomalies, patterns, or specific security events.
 
-This project is a locally hosted, AI-driven tool designed to automate the workflow of a Cybersecurity Analyst (SOC L1/L2).
-It tackles the critical issue of "Alert Fatigue" by allowing analysts to investigate massive volumes of unstructured logs (TXT, JSON) and Threat Intelligence reports (PDF) using natural language queries.
+## 🏗️ Architecture Breakdown
+Based on the provided **RAG-Model**, the system follows this workflow:
 
-The core advantage of this project is 100% Data Privacy. By leveraging a localized Llama 3 model (via Ollama), it ensures that sensitive corporate logs never leave the secure network perimeter, strictly avoiding third-party cloud APIs (like OpenAI).
+1. **Data Ingestion**: Server logs are collected and **split into chunks** to maintain context and stay within LLM token limits.
+2. **Embedding**: A specialized **Embedding Model** transforms text chunks into numerical vectors.
+3. **Storage**: Vectors are indexed into a **Vector Store Index** and saved in a **Vector Database** (ChromaDB/FAISS).
+4. **Retrieval & Context**: When a **Query** is made, the system searches the database for relevant logs, providing the **Context** to the model.
+5. **Generation**: The **LLM** combines the original query with the retrieved context to produce a precise, grounded **Response**.
 
-    Technology Stack
+## 🗺️ Architecture Diagram
+![SOC Analyst RAG Model](RAG-Model.jpg)
 
-Language: Python
+## 🛠️ Tech Stack
+* **Language**: Python 3.12+
+* **Vector DB**: ChromaDB (located in `/db_storage`)
+* **Core Logic**: LangChain / Boto3
+* **Containerization**: Docker & Docker Compose
+* **Data**: Server Logs (Sample provided in `sample.pdf`)
 
-LLM & AI: Llama 3 (via Ollama), LangChain, HuggingFace (all-MiniLM-L6-v2)
+## 🚀 Deployment (Docker)
+To run the investigator locally:
 
-Vector Database: ChromaDB
-
-Frontend UI: Streamlit
-
-Infrastructure: Docker, Docker Compose
-
-   Key Features
-
-Automated Ingestion: Upload and chunk unstructured data (Syslog, Auth.log, Windows Events) and reports (PDF) directly via the web interface.
-
-Semantic Vectorization: Converts logs into embeddings for rapid semantic search and context retrieval.
-
-Automated Incident Reporting: The LLM generates structured reports strictly adhering to SOC standards:
-
-Severity Level Assessment
-
-Event Summary
-
-Detected IOCs (Indicators of Compromise: IPs, Users)
-
-MITRE ATT&CK Framework Mapping
-
-Recommended Mitigation Actions
-
-    Installation & Usage
-
-Option 1: Run via Docker (Recommended)
-
-Ensure you have Docker and Ollama installed on your host machine.
-First, pull the Llama 3 model in your terminal:
-
-ollama pull llama3
-
-
-Then, run the following command in the project directory:
-
-docker-compose up --build
-
-
-(Note: If your system uses an underscore, run docker_compose up --build)
-The application will be accessible at: http://localhost:8501
-
-Option 2: Local Python Execution
-
-Activate your virtual environment.
-
-Install the required dependencies:
-
-pip install streamlit langchain langchain_community langchain_ollama langchain_huggingface chromadb sentence_transformers pypdf
-
-
-Launch the Streamlit web interface:
-
-streamlit run app_soc.py
-
-
-     Use Case Example
-
-Upload an auth.log containing brute-force attempts.
-
-Ask: "Were there any suspicious login attempts? Identify the source IP."
-
-Receive a full, actionable Incident Report mapped to MITRE ATT&CK.
+1. Clone the repository.
+2. Build and run the containers:
+   ```bash
+   docker-compose up --build
